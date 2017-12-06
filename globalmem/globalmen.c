@@ -1,8 +1,6 @@
 /*
 *a simple char device driver: globalmem without mutex
 */
-
-sb!
 #include<linux/module.h>
 #include<linux/fs.h>
 #include<linux/init.h>
