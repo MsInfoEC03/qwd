@@ -1,30 +1,77 @@
-#include<fcntl.h>
-#include<stdio.h>
-#include<unistd.h>
-#include <sys/ioctl.h>
-#define BUFFSIZE 1024
-#define MEM_CLEAR 0x1
-int main()
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <string.h> 
+#define BUFFSIZE 4096
+int main(void )
 {
-    int fd,n,pos;
-    char buf[BUFFSIZE];
-    if((fd =  open("/dev/globalmem",O_RDWR)) == -1)
-    printf("globalmem open error\n");
-    else
-    printf("globalmem is opened,fd is %d\n",fd);
-    while((n = read(fd,buf,BUFFSIZE))>0)
-        if(write(STDOUT_FILENO,buf,n)!=n)
-	    printf("write error\n");
-    if(n < 0)
-    printf("read error\n");
-    if((pos=lseek(fd,5,SEEK_SET)) == -1)
-    printf("can't seek\n");
-    ioctl(fd,MEM_CLEAR,0);
-    while((n = read(fd,buf,BUFFSIZE))>0)
-	if(write(STDOUT_FILENO,buf,n)!=n)
-	    printf("write error\n");
-    if(n < 0)
-    printf("read error");
-    close(fd);
-    return 0;
+	int fd,n;
+    char buf[11] = "hello world";
+    char buff[11];
+    pid_t pid;
+	fd = open("/dev/globalmem",O_RDWR);
+	if(fd<0)
+        printf("open error\n");
+    if((pid = fork()) < 0){
+        printf("fork error\n");
+    }
+    if(pid == 0){
+        while(1){
+            printf("------------------\n");
+            /*if(write(fd,buf,sizeof(buf))!=sizeof(buf))
+                printf("write error\n");*/
+        }
+    }
+	else{
+        while(1){
+            printf("******************\n");
+            if((n=read(fd,buff,strlen(buf)))>0)
+                printf("%s\n",buff);
+            if(n<0)
+                printf("read error\n");
+          
+        }
+    }
+	close(fd);
+	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
